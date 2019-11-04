@@ -16,38 +16,38 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有_
         """Set the path for images, captions and vocabulary wrapper.
         
         Args:
-            root: image directory.
+            root: image directory.                #
             json: coco annotation file path.
-            vocab: vocabulary wrapper.
+            vocab: vocabulary wrapper.            #词汇包装
             transform: image transformer.
         """
         self.root = root
         self.coco = COCO(json)
-        self.ids = list(self.coco.anns.keys())
+        self.ids = list(self.coco.anns.keys())    #id = keys
         self.vocab = vocab
         self.transform = transform
 
-    def __getitem__(self, index):
+    def __getitem__(self, index):                 #（图片，index标签）
         """Returns one data pair (image and caption)."""
         coco = self.coco
         vocab = self.vocab
-        ann_id = self.ids[index]
-        caption = coco.anns[ann_id]['caption']
+        ann_id = self.ids[index]                  #index标签的id
+        caption = coco.anns[ann_id]['caption']    
         img_id = coco.anns[ann_id]['image_id']
-        path = coco.loadImgs(img_id)[0]['file_name']
+        path = coco.loadImgs(img_id)[0]['file_name']    #路径
 
-        image = Image.open(os.path.join(self.root, path)).convert('RGB')
+        image = Image.open(os.path.join(self.root, path)).convert('RGB')    
         if self.transform is not None:
             image = self.transform(image)
 
-        # Convert caption (string) to word ids.
-        tokens = nltk.tokenize.word_tokenize(str(caption).lower())
+        # Convert caption (string) to word ids.                      caption → target
+        tokens = nltk.tokenize.word_tokenize(str(caption).lower())   #nltk.word_tokenize(text)分词，nltk.FreqDist(words)词频统计
         caption = []
         caption.append(vocab('<start>'))
         caption.extend([vocab(token) for token in tokens])
-        caption.append(vocab('<end>'))
+        caption.append(vocab('<end>'))                                
         target = torch.Tensor(caption)
-        return image, target
+        return image, target                                         #image,caption   图片，单词序列
 
     def __len__(self):
         return len(self.ids)
