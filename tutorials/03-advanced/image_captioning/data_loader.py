@@ -70,15 +70,15 @@ def collate_fn(data):
         lengths: list; valid length for each padded caption.
     """
     # Sort a data list by caption length (descending order).
-    data.sort(key=lambda x: len(x[1]), reverse=True)
-    images, captions = zip(*data)
+    data.sort(key=lambda x: len(x[1]), reverse=True)      #list.sort(cmp=None, key=None, reverse=False ) cmp可选参数、key用来进行比较的元素、False升序
+    images, captions = zip(*data)                         #zip() 打包为元组的列表，zip(*) 将元组解压为列表
 
     # Merge images (from tuple of 3D tensor to 4D tensor).
-    images = torch.stack(images, 0)
+    images = torch.stack(images, 0)                            #图片增加纬度在0位
 
-    # Merge captions (from tuple of 1D tensor to 2D tensor).
+    # Merge captions (from tuple of 1D tensor to 2D tensor).   #caption增加维度
     lengths = [len(cap) for cap in captions]
-    targets = torch.zeros(len(captions), max(lengths)).long()
+    targets = torch.zeros(len(captions), max(lengths)).long()    #long()将数字或字符串转换为长整型
     for i, cap in enumerate(captions):
         end = lengths[i]
         targets[i, :end] = cap[:end]        
@@ -94,12 +94,12 @@ def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
     
     # Data loader for COCO dataset
     # This will return (images, captions, lengths) for each iteration.
-    # images: a tensor of shape (batch_size, 3, 224, 224).
+    # images: a tensor of shape (batch_size, 3, 224, 224).                         #(batch_size, 3, 224, 224)
     # captions: a tensor of shape (batch_size, padded_length).
     # lengths: a list indicating valid length for each caption. length is (batch_size).
-    data_loader = torch.utils.data.DataLoader(dataset=coco, 
-                                              batch_size=batch_size,
-                                              shuffle=shuffle,
-                                              num_workers=num_workers,
-                                              collate_fn=collate_fn)
+    data_loader = torch.utils.data.DataLoader(dataset=coco,              #dataset (Dataset): 加载数据的数据集
+                                              batch_size=batch_size,     #batch_size (int, optional): 每批加载多少个样本
+                                              shuffle=shuffle,           #shuffle (bool, optional): 设置为“真”时,在每个epoch对数据打乱.（默认：False）
+                                              num_workers=num_workers,   #num_workers (int, optional): 用于加载数据的子进程数。0表示数据将在主进程中加载​​。（默认：0）
+                                              collate_fn=collate_fn)     #collate_fn (callable, optional): 合并样本列表以形成一个 mini-batch.  #　callable可调用对象
     return data_loader
