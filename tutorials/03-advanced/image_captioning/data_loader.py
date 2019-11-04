@@ -1,6 +1,6 @@
 import torch
 import torchvision.transforms as transforms
-import torch.utils.data as data
+import torch.utils.data as data            #torch.utils.data主要包括以下三个类：Dataset / sampler.Sampler / DataLoader
 import os
 import pickle
 import numpy as np
@@ -10,8 +10,8 @@ from build_vocab import Vocabulary
 from pycocotools.coco import COCO
 
 
-class CocoDataset(data.Dataset):    #coco数据集
-    """COCO Custom Dataset compatible with torch.utils.data.DataLoader."""
+class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有__getitem__(self, index)函数来根据索引序号获取图片和标签,
+    """COCO Custom Dataset compatible with torch.utils.data.DataLoader."""          #有__len__(self)函数来获取数据集的长度.
     def __init__(self, root, json, vocab, transform=None):
         """Set the path for images, captions and vocabulary wrapper.
         
