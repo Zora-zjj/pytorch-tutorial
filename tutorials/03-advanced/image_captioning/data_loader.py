@@ -23,7 +23,7 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有_
         """
         self.root = root
         self.coco = COCO(json)
-        self.ids = list(self.coco.anns.keys())    #id = keys
+        self.ids = list(self.coco.anns.keys())    #图片id = keys
         self.vocab = vocab
         self.transform = transform
 
@@ -47,10 +47,10 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有_
         caption.extend([vocab(token) for token in tokens])
         caption.append(vocab('<end>'))                                
         target = torch.Tensor(caption)
-        return image, target                                         #image,caption   图片，单词序列
+        return image, target                                         #image,target   图片，单词序列
 
-    def __len__(self):
-        return len(self.ids)
+    def __len__(self):                #有__len__(self)函数来获取数据集的长度.
+        return len(self.ids)            
 
 
 def collate_fn(data):
@@ -65,8 +65,8 @@ def collate_fn(data):
             - caption: torch tensor of shape (?); variable length.
 
     Returns:
-        images: torch tensor of shape (batch_size, 3, 256, 256).
-        targets: torch tensor of shape (batch_size, padded_length).
+        images: torch tensor of shape (batch_size, 3, 256, 256).          #图片(batch_size, 3, 256, 256)
+        targets: torch tensor of shape (batch_size, padded_length).       #target(batch_size, padded_length)，扩长
         lengths: list; valid length for each padded caption.
     """
     # Sort a data list by caption length (descending order).
