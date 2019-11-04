@@ -10,7 +10,7 @@ from build_vocab import Vocabulary
 from pycocotools.coco import COCO
 
 
-class CocoDataset(data.Dataset):
+class CocoDataset(data.Dataset):    #coco数据集
     """COCO Custom Dataset compatible with torch.utils.data.DataLoader."""
     def __init__(self, root, json, vocab, transform=None):
         """Set the path for images, captions and vocabulary wrapper.
