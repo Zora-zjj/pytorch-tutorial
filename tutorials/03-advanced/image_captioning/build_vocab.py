@@ -20,7 +20,7 @@ class Vocabulary(object):
 
     def __call__(self, word):
         if not word in self.word2idx:
-            return self.word2idx['<unk>']
+            return self.word2idx['<unk>']         #['<unk>'] 
         return self.word2idx[word]
 
     def __len__(self):
@@ -29,7 +29,7 @@ class Vocabulary(object):
 def build_vocab(json, threshold):
     """Build a simple vocabulary wrapper."""
     coco = COCO(json)
-    counter = Counter()
+    counter = Counter()             #计数
     ids = coco.anns.keys()
     for i, id in enumerate(ids):
         caption = str(coco.anns[id]['caption'])
