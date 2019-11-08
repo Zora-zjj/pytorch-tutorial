@@ -12,7 +12,7 @@ from torchvision import transforms
 
 
 # Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   #torch.device代表将torch.Tensor分配到的设备的对象
 
 def main(args):
     # Create model directory
@@ -20,7 +20,7 @@ def main(args):
         os.makedirs(args.model_path)
     
     # Image preprocessing, normalization for the pretrained resnet
-    transform = transforms.Compose([ 
+    transform = transforms.Compose([                            #用Compose把多个步骤整合到一起
         transforms.RandomCrop(args.crop_size),
         transforms.RandomHorizontalFlip(), 
         transforms.ToTensor(), 
