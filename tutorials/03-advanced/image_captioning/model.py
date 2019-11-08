@@ -10,9 +10,9 @@ class EncoderCNN(nn.Module):
         super(EncoderCNN, self).__init__()
         resnet = models.resnet152(pretrained=True)
         modules = list(resnet.children())[:-1]      # delete the last fc layer.
-        self.resnet = nn.Sequential(*modules)
+        self.resnet = nn.Sequential(*modules)  #nn.Sequential类似于Keras中的贯序模型，它是Module的子类，在构建数个网络层之后会自动调用forward()方法，从而有网络模型生成。
         self.linear = nn.Linear(resnet.fc.in_features, embed_size)
-        self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)
+        self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)   #使得每一层神经网络的输入保持相同分布
         
     def forward(self, images):
         """Extract feature vectors from input images."""
@@ -36,7 +36,7 @@ class DecoderRNN(nn.Module):
         """Decode image feature vectors and generates captions."""
         embeddings = self.embed(captions)
         embeddings = torch.cat((features.unsqueeze(1), embeddings), 1)
-        packed = pack_padded_sequence(embeddings, lengths, batch_first=True) 
+        packed = pack_padded_sequence(embeddings, lengths, batch_first=True)   #pack_padded_sequence填充
         hiddens, _ = self.lstm(packed)
         outputs = self.linear(hiddens[0])
         return outputs
