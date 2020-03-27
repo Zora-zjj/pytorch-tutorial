@@ -71,15 +71,15 @@ def collate_fn(data):
     images, captions = zip(*data)                         #zip() 打包为元组的列表，zip(*) 将元组解压为列表
 
     # Merge images (from tuple of 3D tensor to 4D tensor).
-    images = torch.stack(images, 0)                            #图片增加纬度在0位
+    images = torch.stack(images, 0)                            #图片叠加，在0位上
 
     # Merge captions (from tuple of 1D tensor to 2D tensor).   #caption增加维度
-    lengths = [len(cap) for cap in captions]
+    lengths = [len(cap) for cap in captions]                   #每个caption的长度
     targets = torch.zeros(len(captions), max(lengths)).long()    #long()将数字或字符串转换为长整型
     for i, cap in enumerate(captions):
         end = lengths[i]
         targets[i, :end] = cap[:end]        
-    return images, targets, lengths
+    return images, targets, lengths                           #将长度不等的caption扩展为长度相同的？
 
 def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
     """Returns torch.utils.data.DataLoader for custom coco dataset."""
@@ -92,7 +92,7 @@ def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
     # Data loader for COCO dataset
     # This will return (images, captions, lengths) for each iteration.
     # images: a tensor of shape (batch_size, 3, 224, 224).                         #(batch_size, 3, 224, 224)
-    # captions: a tensor of shape (batch_size, padded_length).
+    # captions: a tensor of shape (batch_size, padded_length).                     #(batch_size, padded_length) 扩展的长度
     # lengths: a list indicating valid length for each caption. length is (batch_size).
     data_loader = torch.utils.data.DataLoader(dataset=coco,              #dataset (Dataset): 加载数据的数据集
                                               batch_size=batch_size,     #batch_size (int, optional): 每批加载多少个样本
