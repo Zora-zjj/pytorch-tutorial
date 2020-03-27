@@ -29,7 +29,7 @@ def main(args):
     
     # Load vocabulary wrapper
     with open(args.vocab_path, 'rb') as f:
-        vocab = pickle.load(f)
+        vocab = pickle.load(f)                    #pickle.load() : 进行数据的加载
     
     # Build data loader
     data_loader = get_loader(args.image_dir, args.caption_path, vocab, 
