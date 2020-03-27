@@ -7,12 +7,12 @@ from torch.nn.utils.rnn import pack_padded_sequence
 class EncoderCNN(nn.Module):
     def __init__(self, embed_size):
         """Load the pretrained ResNet-152 and replace top fc layer."""
-        super(EncoderCNN, self).__init__()
-        resnet = models.resnet152(pretrained=True)
-        modules = list(resnet.children())[:-1]      # delete the last fc layer.
+        super(EncoderCNN, self).__init__()   
+        resnet = models.resnet152(pretrained=True)                  #resNet
+        modules = list(resnet.children())[:-1]                      # delete the last fc layer.
         self.resnet = nn.Sequential(*modules)  #nn.Sequential类似于Keras中的贯序模型，它是Module的子类，在构建数个网络层之后会自动调用forward()方法，从而有网络模型生成。
         self.linear = nn.Linear(resnet.fc.in_features, embed_size)
-        self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)   #使得每一层神经网络的输入保持相同分布
+        self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)   
         
     def forward(self, images):
         """Extract feature vectors from input images."""
@@ -27,7 +27,7 @@ class DecoderRNN(nn.Module):
     def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_seq_length=20):
         """Set the hyper-parameters and build the layers."""
         super(DecoderRNN, self).__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
+        self.embed = nn.Embedding(vocab_size, embed_size)                          #embedding
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)
         self.max_seg_length = max_seq_length
