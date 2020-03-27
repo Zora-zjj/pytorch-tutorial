@@ -8,19 +8,19 @@ from pycocotools.coco import COCO
 class Vocabulary(object):
     """Simple vocabulary wrapper."""
     def __init__(self):
-        self.word2idx = {}
+        self.word2idx = {}          
         self.idx2word = {}
         self.idx = 0
 
-    def add_word(self, word):
+    def add_word(self, word):               
         if not word in self.word2idx:
-            self.word2idx[word] = self.idx
+            self.word2idx[word] = self.idx          #建立 word2idx索引、idx2word索引
             self.idx2word[self.idx] = word
             self.idx += 1
 
     def __call__(self, word):
         if not word in self.word2idx:
-            return self.word2idx['<unk>']         #['<unk>'] 
+            return self.word2idx['<unk>']         #['<unk>'] ？？？
         return self.word2idx[word]
 
     def __len__(self):
@@ -33,7 +33,7 @@ def build_vocab(json, threshold):
     ids = coco.anns.keys()
     for i, id in enumerate(ids):
         caption = str(coco.anns[id]['caption'])
-        tokens = nltk.tokenize.word_tokenize(caption.lower())
+        tokens = nltk.tokenize.word_tokenize(caption.lower())    #对caption分词
         counter.update(tokens)
 
         if (i+1) % 1000 == 0:
