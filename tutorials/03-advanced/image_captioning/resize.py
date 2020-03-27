@@ -23,7 +23,7 @@ def resize_images(image_dir, output_dir, size):
             print ("[{}/{}] Resized the images and saved into '{}'."
                    .format(i+1, num_images, output_dir))
 
-def main(args):                                 #args ？？？
+def main(args):                                 #args：参数
     image_dir = args.image_dir
     output_dir = args.output_dir
     image_size = [args.image_size, args.image_size]
