@@ -16,37 +16,37 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有_
         """Set the path for images, captions and vocabulary wrapper.
         
         Args:
-            root: image directory.                #
-            json: coco annotation file path.
-            vocab: vocabulary wrapper.            #词汇包装
+            root: image directory.                #图片目录
+            json: coco annotation file path.      #路径
+            vocab: vocabulary wrapper.            #字典
             transform: image transformer.
         """
         self.root = root
         self.coco = COCO(json)
-        self.ids = list(self.coco.anns.keys())    #图片id = keys
+        self.ids = list(self.coco.anns.keys())    
         self.vocab = vocab
         self.transform = transform
 
     def __getitem__(self, index):                 #（图片，index标签）
         """Returns one data pair (image and caption)."""
-        coco = self.coco
+        coco = self.coco                          #构建coco对象， coco = COCO(json_file)
         vocab = self.vocab
-        ann_id = self.ids[index]                  #index标签的id
-        caption = coco.anns[ann_id]['caption']    
-        img_id = coco.anns[ann_id]['image_id']
-        path = coco.loadImgs(img_id)[0]['file_name']    #路径
-
-        image = Image.open(os.path.join(self.root, path)).convert('RGB')    
+        ann_id = self.ids[index]                  #groundtruth的id
+        caption = coco.anns[ann_id]['caption']    #groundtruth
+        img_id = coco.anns[ann_id]['image_id']    #图片id
+        path = coco.loadImgs(img_id)[0]['file_name']    #coco.loadImgs：根据id号，导入对应的图像信息
+        image = Image.open(os.path.join(self.root, path)).convert('RGB')      #os.path.join：路径拼接； image的路径
+        
         if self.transform is not None:
-            image = self.transform(image)
+            image = self.transform(image)   #图片处理
 
         # Convert caption (string) to word ids.                      caption → target
         tokens = nltk.tokenize.word_tokenize(str(caption).lower())   #nltk.word_tokenize(text)分词，nltk.FreqDist(words)词频统计
         caption = []
         caption.append(vocab('<start>'))
         caption.extend([vocab(token) for token in tokens])
-        caption.append(vocab('<end>'))                                
-        target = torch.Tensor(caption)
+        caption.append(vocab('<end>'))                               #将caption头尾加上标志 
+        target = torch.Tensor(caption)                               #caption → target
         return image, target                                         #image,target   图片，单词序列
 
     def __len__(self):                #有__len__(self)函数来获取数据集的长度.
@@ -55,15 +55,12 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集,有_
 
 def collate_fn(data):
     """Creates mini-batch tensors from the list of tuples (image, caption).
-    
     We should build custom collate_fn rather than using default collate_fn, 
     because merging caption (including padding) is not supported in default.
-
     Args:
         data: list of tuple (image, caption). 
             - image: torch tensor of shape (3, 256, 256).
             - caption: torch tensor of shape (?); variable length.
-
     Returns:
         images: torch tensor of shape (batch_size, 3, 256, 256).          #图片(batch_size, 3, 256, 256)
         targets: torch tensor of shape (batch_size, padded_length).       #target(batch_size, padded_length)，扩长
