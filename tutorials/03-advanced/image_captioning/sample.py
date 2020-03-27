@@ -40,8 +40,8 @@ def main(args):
     decoder = decoder.to(device)
 
     # Load the trained model parameters
-    encoder.load_state_dict(torch.load(args.encoder_path))
-    decoder.load_state_dict(torch.load(args.decoder_path))
+    encoder.load_state_dict(torch.load(args.encoder_path))  #保存模型参数用 model.cpu().state_dict()，
+    decoder.load_state_dict(torch.load(args.decoder_path))  #加载模型时一般用 model.load_state_dict(torch.load(model_path))。
 
     # Prepare an image
     image = load_image(args.image, transform)
