@@ -11,7 +11,7 @@ class EncoderCNN(nn.Module):
         resnet = models.resnet152(pretrained=True)                  #resNet
         modules = list(resnet.children())[:-1]                      # delete the last fc layer.
         self.resnet = nn.Sequential(*modules)  #nn.Sequential类似于Keras中的贯序模型，它是Module的子类，在构建数个网络层之后会自动调用forward()方法，从而有网络模型生成。
-        self.linear = nn.Linear(resnet.fc.in_features, embed_size)
+        self.linear = nn.Linear(resnet.fc.in_features, embed_size)   #（*）会把接收到的参数形成一个元组，而（**）则会把接收到的参数存入一个字典
         self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)   
         
     def forward(self, images):
@@ -23,12 +23,12 @@ class EncoderCNN(nn.Module):
         return features
 
 
-class DecoderRNN(nn.Module):
-    def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_seq_length=20):
+class DecoderRNN(nn.Module):  #input数据(seq_len,batch_size,input_size)=(,,embed_size)：(每个句子长度，几个句子，每个单词用几维度表示)
+    def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_seq_length=20): 
         """Set the hyper-parameters and build the layers."""
         super(DecoderRNN, self).__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)                          #embedding
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
+        self.embed = nn.Embedding(vocab_size, embed_size)                          #(字典单词数，维度)
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True) #(input_size,hidden_size,num_layers)
         self.linear = nn.Linear(hidden_size, vocab_size)
         self.max_seg_length = max_seq_length
         
