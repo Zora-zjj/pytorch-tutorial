@@ -19,7 +19,7 @@ class Vocabulary(object):
 
     def __call__(self, word):
         if not word in self.word2idx:
-            return self.word2idx['<unk>']         #['<unk>'] ？？？
+            return self.word2idx['<unk>']         
         return self.word2idx[word]
 
     def __len__(self):
@@ -28,9 +28,9 @@ class Vocabulary(object):
 def build_vocab(json, threshold):
     """Build a simple vocabulary wrapper."""
     coco = COCO(json)                #构建coco对象， coco = pycocotools.coco.COCO(json_file)
-    counter = Counter()              #统计词频
-    ids = coco.anns.keys()
-    for i, id in enumerate(ids):     #将一个可遍历的数据对象(如列表、元组或字符串)组合为一个索引序列，同时列出数据和数据下标
+    counter = Counter()              #统计词频， 词：频数
+    ids = coco.anns.keys()          #？？？
+    for i, id in enumerate(ids):     #i id ？？？
         caption = str(coco.anns[id]['caption'])    #获取caption
         tokens = nltk.tokenize.word_tokenize(caption.lower())    #对caption分词
         counter.update(tokens)       #将tokens更新加入到counter中
@@ -54,8 +54,8 @@ def build_vocab(json, threshold):
     return vocab
 
 def main(args):
-    vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #？？？？
-    vocab_path = args.vocab_path
+    vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #args.caption_path、args.threshold？？？？参数？
+    vocab_path = args.vocab_path   #定义一个路径，后面将字典保存到这
     with open(vocab_path, 'wb') as f:  #将字典vocab保存到vocab_path文件
         pickle.dump(vocab, f)      #pickle.dump(obj, file, [,protocol])，序列化对象，将对象obj保存到文件file中去。参数protocol是序列化模式，默认是0
     print("Total vocabulary size: {}".format(len(vocab)))
