@@ -53,7 +53,7 @@ def build_vocab(json, threshold):
         vocab.add_word(word)     #将word加入字典
     return vocab
 
-def main(args):
+def main(args):   #参数：caption路径，保存路径，阙值
     vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #args.caption_path、args.threshold？？？？参数？
     vocab_path = args.vocab_path   #定义一个路径，后面将字典保存到这
     with open(vocab_path, 'wb') as f:  #将字典vocab保存到vocab_path文件
