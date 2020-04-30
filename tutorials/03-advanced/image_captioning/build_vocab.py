@@ -55,9 +55,9 @@ def build_vocab(json, threshold):
 
 def main(args):   #参数：caption路径，保存路径，阙值
     vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #args.caption_path、args.threshold？？？？参数？
-    vocab_path = args.vocab_path   #定义一个路径，后面将字典保存到这
+    vocab_path = args.vocab_path       #定义一个路径，后面将字典保存到这
     with open(vocab_path, 'wb') as f:  #将字典vocab保存到vocab_path文件
-        pickle.dump(vocab, f)      #pickle.dump(obj, file, [,protocol])，序列化对象，将对象obj保存到文件file中去。参数protocol是序列化模式，默认是0
+        pickle.dump(vocab, f)          #pickle.dump(obj, file, [,protocol])，序列化对象，将对象obj保存到文件file中去。参数protocol是序列化模式，默认是0
     print("Total vocabulary size: {}".format(len(vocab)))
     print("Saved the vocabulary wrapper to '{}'".format(vocab_path))
 
