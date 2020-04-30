@@ -3,11 +3,11 @@ import os
 from PIL import Image
 
 
-def resize_image(image, size):
+def resize_image(image, size):                     #resize一张图片
     """Resize an image to the given size."""
     return image.resize(size, Image.ANTIALIAS)     #resize指定大小和质量，Image.ANTIALIAS高质量
 
-def resize_images(image_dir, output_dir, size):
+def resize_images(image_dir, output_dir, size):    #批量resize图片后保存到output_dir
     """Resize the images in 'image_dir' and save into 'output_dir'."""
     if not os.path.exists(output_dir):    #os操作系统，os.path.exists判断括号里的文件是否存在，（文件路径）
         os.makedirs(output_dir)           #os.makedirs(path, mode=0o777)递归创建目录，path - 需要递归创建的目录，mode - 权限模式
