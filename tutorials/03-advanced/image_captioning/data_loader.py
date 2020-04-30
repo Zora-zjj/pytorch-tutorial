@@ -24,16 +24,16 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集，  
         """
         self.root = root
         self.coco = COCO(json)
-        self.ids = list(self.coco.anns.keys())    
+        self.ids = list(self.coco.anns.keys())    #ids：anns的id
         self.vocab = vocab
         self.transform = transform
 
-    def __getitem__(self, index):                 #（index标签，caption，图片）多对1
+    def __getitem__(self, index):                 #（给定某个caption的index）--- 返回（图片，caption分词序列）
         """Returns one data pair (image and caption)."""
         coco = self.coco                          #构建coco对象， coco = COCO(json_file)
         vocab = self.vocab
-        ann_id = self.ids[index]                  #groundtruth的id
-        caption = coco.anns[ann_id]['caption']    #groundtruth
+        ann_id = self.ids[index]                  #caption的id
+        caption = coco.anns[ann_id]['caption']    #caption
         img_id = coco.anns[ann_id]['image_id']    #图片id
         path = coco.loadImgs(img_id)[0]['file_name']    #coco.loadImgs：根据id号，导入对应的图像信息
         image = Image.open(os.path.join(self.root, path)).convert('RGB')      #os.path.join：路径拼接； image的路径
@@ -42,7 +42,7 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集，  
             image = self.transform(image)   #图片处理
 
         # Convert caption (string) to word ids.                      caption → target
-        tokens = nltk.tokenize.word_tokenize(str(caption).lower())   #nltk.word_tokenize(text)分词，nltk.FreqDist(words)词频统计
+        tokens = nltk.tokenize.word_tokenize(str(caption).lower())   #某个index的caption的分词
         caption = []
         caption.append(vocab('<start>'))
         caption.extend([vocab(token) for token in tokens])
@@ -54,17 +54,17 @@ class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集，  
         return len(self.ids)            
 
 
-def collate_fn(data):     #参数：data，应该是上个返回的image，target
+def collate_fn(data):     #参数：data，应该是上个返回的image，target      #加上batch，补长
     """Creates mini-batch tensors from the list of tuples (image, caption).
     We should build custom collate_fn rather than using default collate_fn, 
     because merging caption (including padding) is not supported in default.
-    Args:
-        data: list of tuple (image, caption). 
-            - image: torch tensor of shape (3, 256, 256).
-            - caption: torch tensor of shape (?); variable length.
-    Returns:
-        images: torch tensor of shape (batch_size, 3, 256, 256).          #图片(batch_size, 3, 256, 256)
-        targets: torch tensor of shape (batch_size, padded_length).       #target(batch_size, padded_length)，扩长
+    Args:                                                                #输入：
+        data: list of tuple (image, caption).                            #列表元祖(image, caption)
+            - image: torch tensor of shape (3, 256, 256).                #image   (3, 256, 256)
+            - caption: torch tensor of shape (?); variable length.       #caption (variable length)
+    Returns:                                                              #输出：
+        images: torch tensor of shape (batch_size, 3, 256, 256).          #images (batch_size, 3, 256, 256)
+        targets: torch tensor of shape (batch_size, padded_length).       #targets (batch_size, padded_length)，扩长
         lengths: list; valid length for each padded caption.
     """
     # Sort a data list by caption length (descending order).
@@ -80,7 +80,7 @@ def collate_fn(data):     #参数：data，应该是上个返回的image，targe
     for i, cap in enumerate(captions):
         end = lengths[i]
         targets[i, :end] = cap[:end]        #将caption前面有数据的补在targets中，扩展的为0
-    return images, targets, lengths                           #将长度不等的caption扩展为长度相同的？
+    return images, targets, lengths                           
 
 def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
     """Returns torch.utils.data.DataLoader for custom coco dataset."""
@@ -99,5 +99,5 @@ def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
                                               batch_size=batch_size,     #batch_size (int, optional): 每批加载多少个样本
                                               shuffle=shuffle,           #shuffle (bool, optional): 设置为“真”时,在每个epoch对数据打乱.（默认：False）
                                               num_workers=num_workers,   #num_workers (int, optional): 用于加载数据的子进程数。0表示数据将在主进程中加载​​。（默认：0）
-                                              collate_fn=collate_fn)     #collate_fn (callable, optional): 合并样本列表以形成一个 mini-batch.  #　callable可调用对象
+                                              collate_fn=collate_fn)     #collate_fn (callable, optional): 合并样本列表以形成一个 mini-batch.  #是上面的定义函数
     return data_loader
