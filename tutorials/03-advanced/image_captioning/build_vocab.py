@@ -29,29 +29,29 @@ def build_vocab(json, threshold):
     """Build a simple vocabulary wrapper."""
     coco = COCO(json)                #构建coco对象， coco = pycocotools.coco.COCO(json_file)
     counter = Counter()              #统计词频， 词：频数
-    ids = coco.anns.keys()          #？？？
-    for i, id in enumerate(ids):     #i id ？？？
-        caption = str(coco.anns[id]['caption'])    #获取caption
-        tokens = nltk.tokenize.word_tokenize(caption.lower())    #对caption分词
-        counter.update(tokens)       #将tokens更新加入到counter中
+    ids = coco.anns.keys()          #anns的ids
+    for i, id in enumerate(ids):     
+        caption = str(coco.anns[id]['caption'])                  #获取caption
+        tokens = nltk.tokenize.word_tokenize(caption.lower())    # word_tokenize 对caption分词
+        counter.update(tokens)                                   #将tokens更新加入到counter中
 
         if (i+1) % 1000 == 0:
             print("[{}/{}] Tokenized the captions.".format(i+1, len(ids)))   #百分多少的caption单词已被Tokenized
 
     # If the word frequency is less than 'threshold', then the word is discarded.   频率小于阙值的单词被遗弃
-    words = [word for word, cnt in counter.items() if cnt >= threshold]    #cnt？？，得到大于阙值的单词
+    words = [word for word, cnt in counter.items() if cnt >= threshold]    #cnt是频数，得到大于阙值的单词表 words
 
     # Create a vocab wrapper and add some special tokens.
     vocab = Vocabulary()
-    vocab.add_word('<pad>')      #将这4各个词加入字典
+    vocab.add_word('<pad>')      
     vocab.add_word('<start>')
     vocab.add_word('<end>')
     vocab.add_word('<unk>')
 
-    # Add the words to the vocabulary.
+    
     for i, word in enumerate(words):
-        vocab.add_word(word)     #将word加入字典
-    return vocab
+        vocab.add_word(word)     
+    return vocab              #词汇表 vocab
 
 def main(args):   #参数：caption路径，保存路径，阙值
     vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #args.caption_path、args.threshold？？？？参数？
