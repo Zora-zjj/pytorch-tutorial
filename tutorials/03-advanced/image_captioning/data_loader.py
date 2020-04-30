@@ -11,7 +11,6 @@ from pycocotools.coco import COCO
 
 
 class CocoDataset(data.Dataset):    #coco数据集，Dataset创建数据集，      参数：路径，字典，transform
-    """COCO Custom Dataset compatible with torch.utils.data.DataLoader."""          
     def __init__(self, root, json, vocab, transform=None)
     """COCO Custom Dataset compatible with torch.utils.data.DataLoader."""          
     def __init__(self, root, json, vocab, transform=None):
