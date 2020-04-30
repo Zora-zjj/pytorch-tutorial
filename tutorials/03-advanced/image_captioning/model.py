@@ -18,8 +18,8 @@ class EncoderCNN(nn.Module):
         """Extract feature vectors from input images."""
         with torch.no_grad():
             features = self.resnet(images)
-        features = features.reshape(features.size(0), -1)
-        features = self.bn(self.linear(features))
+        features = features.reshape(features.size(0), -1)     #维度  [batch,打平]
+        features = self.bn(self.linear(features))             #维度  [batch,embed_size]
         return features
 
 
@@ -35,10 +35,10 @@ class DecoderRNN(nn.Module):  #input数据(seq_len,batch_size,input_size)=(,,emb
     def forward(self, features, captions, lengths):
         """Decode image feature vectors and generates captions."""
         embeddings = self.embed(captions)
-        embeddings = torch.cat((features.unsqueeze(1), embeddings), 1)
+        embeddings = torch.cat((features.unsqueeze(1), embeddings), 1)   # [batch,1,embed_size]+[batch,vocab_size,embed_size] 将x0放在xt之后
         packed = pack_padded_sequence(embeddings, lengths, batch_first=True)   #pack_padded_sequence填充
-        hiddens, _ = self.lstm(packed)
-        outputs = self.linear(hiddens[0])
+        hiddens, _ = self.lstm(packed)     #hiddens是out，维度[batch,seq_len,h dim]
+        outputs = self.linear(hiddens[0])  # hidden维度[1,2,3] , hidden[0]维度[2,3]
         return outputs
     
     def sample(self, features, states=None):
