@@ -28,7 +28,7 @@ def main(args):
                              (0.229, 0.224, 0.225))])
     
     # Load vocabulary wrapper
-    with open(args.vocab_path, 'rb') as f:
+    with open(args.vocab_path, 'rb') as f:        #vocab_path :之前文件存放字典的地方
         vocab = pickle.load(f)                    #pickle.load() : 进行数据的加载
     
     # Build data loader
