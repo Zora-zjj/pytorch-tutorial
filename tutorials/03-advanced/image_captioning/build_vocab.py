@@ -54,17 +54,17 @@ def build_vocab(json, threshold):
     return vocab              #词汇表 vocab
 
 def main(args):   #参数：caption路径，保存路径，阙值
-    vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    #args.caption_path、args.threshold？？？？参数？
-    vocab_path = args.vocab_path       #定义一个路径，后面将字典保存到这
-    with open(vocab_path, 'wb') as f:  #将字典vocab保存到vocab_path文件
+    vocab = build_vocab(json=args.caption_path, threshold=args.threshold)    # 'data/annotations/captions_train2014.json' ，4
+    vocab_path = args.vocab_path       #定义一个路径，后面将字典保存到这        # './data/vocab.pkl'
+    with open(vocab_path, 'wb') as f:  
         pickle.dump(vocab, f)          #pickle.dump(obj, file, [,protocol])，序列化对象，将对象obj保存到文件file中去。参数protocol是序列化模式，默认是0
     print("Total vocabulary size: {}".format(len(vocab)))
     print("Saved the vocabulary wrapper to '{}'".format(vocab_path))
 
 
-if __name__ == '__main__':   #当直接运行build_vocab.py时，下面代码运行；当import时，不运行
+if __name__ == '__main__':                    #当直接运行build_vocab.py时，下面代码运行；当import时，不运行
     parser = argparse.ArgumentParser()        #创建一个 ArgumentParser 对象；ArgumentParser 对象包含将命令行解析成 Python 数据类型所需的全部信息
-    parser.add_argument('--caption_path', type=str,     #给一个 ArgumentParse r对象添加程序参数信息   #命名；
+    parser.add_argument('--caption_path', type=str,                           #给一个 ArgumentParse r对象添加程序参数信息   #类型；
                         default='data/annotations/captions_train2014.json',   #当参数未在命令行中出现时使用的值
                         help='path for train annotation file')                #一个此选项作用的简单描述
     parser.add_argument('--vocab_path', type=str, default='./data/vocab.pkl', 
