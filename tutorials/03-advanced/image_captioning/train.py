@@ -16,29 +16,29 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   #torch.d
 
 def main(args):
     # Create model directory
-    if not os.path.exists(args.model_path):
+    if not os.path.exists(args.model_path):     # model_path ： 'models/'
         os.makedirs(args.model_path)
     
     # Image preprocessing, normalization for the pretrained resnet
-    transform = transforms.Compose([                            #用Compose把多个步骤整合到一起
-        transforms.RandomCrop(args.crop_size),
+    transform = transforms.Compose([                            
+        transforms.RandomCrop(args.crop_size),  # crop_size ： 224
         transforms.RandomHorizontalFlip(), 
         transforms.ToTensor(), 
         transforms.Normalize((0.485, 0.456, 0.406), 
                              (0.229, 0.224, 0.225))])
     
     # Load vocabulary wrapper
-    with open(args.vocab_path, 'rb') as f:        #vocab_path :之前文件存放字典的地方
-        vocab = pickle.load(f)                    #pickle.load() : 进行数据的加载
+    with open(args.vocab_path, 'rb') as f:        #vocab_path :之前文件存放字典的地方 'data/vocab.pkl' ，build_vocab.py里是'./data/vocab.pkl'
+        vocab = pickle.load(f)                    #pickle.load() : 进行数据的加载，为vocab
     
-    # Build data loader
-    data_loader = get_loader(args.image_dir, args.caption_path, vocab, 
+    # Build data loader                          #get_loader是data_loader.py里函数
+    data_loader = get_loader(args.image_dir, args.caption_path, vocab,   #image_dir : 'data/resized2014'  , caption_path : 'data/annotations/captions_train2014.json'
                              transform, args.batch_size,
                              shuffle=True, num_workers=args.num_workers) 
 
     # Build the models
-    encoder = EncoderCNN(args.embed_size).to(device)
-    decoder = DecoderRNN(args.embed_size, args.hidden_size, len(vocab), args.num_layers).to(device)
+    encoder = EncoderCNN(args.embed_size).to(device)   # embed_size : 256
+    decoder = DecoderRNN(args.embed_size, args.hidden_size, len(vocab), args.num_layers).to(device)   # hidden_size : 512 , num_layers : 1
     
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
