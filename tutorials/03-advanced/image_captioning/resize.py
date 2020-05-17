@@ -24,9 +24,9 @@ def resize_images(image_dir, output_dir, size):    #批量resize图片后保存�
                    .format(i+1, num_images, output_dir))
 
 def main(args):                                 #args：参数
-    image_dir = args.image_dir
-    output_dir = args.output_dir
-    image_size = [args.image_size, args.image_size]
+    image_dir = args.image_dir                       #'./data/train2014/'
+    output_dir = args.output_dir                     #'./data/resized2014/'
+    image_size = [args.image_size, args.image_size]  #256
     resize_images(image_dir, output_dir, image_size)
 
 
