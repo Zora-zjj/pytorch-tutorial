@@ -14,9 +14,9 @@ from PIL import Image
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def load_image(image_path, transform=None):
-    image = Image.open(image_path)
-    image = image.resize([224, 224], Image.LANCZOS)
-    
+    image = Image.open(image_path)   #PIL.Image.open()专接图片路径，用来直接读取该路径指向的图片。要求路径必须指明到哪张图，不能只是所有图所在的文件夹；
+    image = image.resize([224, 224], Image.LANCZOS)  #对比：open()接路径，常附带r、w、a等，表明需要对该路径读取的文件的操作
+                                                     #PIL.Image.LANCZOS？？？
     if transform is not None:
         image = transform(image).unsqueeze(0)
     
@@ -59,7 +59,7 @@ def main(args):
         sampled_caption.append(word)
         if word == '<end>':
             break
-    sentence = ' '.join(sampled_caption)
+    sentence = ' '.join(sampled_caption)   #str.join(sequence)，例：str = "-";eq = ("a", "b", "c");输出a-b-c
     
     # Print out the image and the generated caption
     print (sentence)
