@@ -1,0 +1,21 @@
+def tococoRes(img_ids, captions, path_out):
+    results = []
+    for img_id, caption in zip(img_ids, captions):
+        results.append({
+            'image_id': int(img_id),
+            'caption': caption[0]
+        })
+
+    with open(path_out, 'wb+') as f:
+        pickle.dump(results, f)words_list = id2words_list(sampled_ids_index)
+
+tococoRes(img_ids, words_list, path_out)
+
+with open(path_out, 'rb') as f:
+    out = pickle.load(f)    
+    
+coco = coco_json_train   
+cocoRes = coco.loadRes(out)    
+cocoEval = COCOEvalCap(coco, coco)  
+cocoEval.params['image_id'] = coco.getImgIds()
+cocoEval.evaluate()   
